@@ -3,7 +3,7 @@ import './App.css';
 
 import Item from '../components/item/item';
 
-class App extends Component {
+export default class App extends Component {
 
   constructor(){
     super();
@@ -17,34 +17,24 @@ class App extends Component {
   }
 
   componentDidMount(){
+    // As mounted - explore most popular 'javascript' repos
     this.explore();
   }
 
   explore(more){
+    // Build url
     let url = `https://api.github.com/search/repositories?order=desc&page=${this.state.page}&per_page=${this.state.per_page}&q=javascript`+(this.state.q !== '' ?  '+'+this.state.q : '' );
     if(this.state.sort !== 'popluar'){
       url += '&sort='+this.state.sort;
     }
+    // Then fetch
     fetch(url)
       .then(response => response.json())
       .then(data => more ? this.setState({items:this.state.items.concat(data.items)}) : this.setState({items:data.items}))
   }
 
-  parseData(data,more){
-    console.log(data);
-    this.setState({items:data.items});
-  }
-
-  _round(value){
-    if(value > 1000){
-      value = value.toString();
-      return value[0] + (value[1] !== '0' ? '.'+value[1] + 'K' : 'K');
-    } else {
-      return value;
-    }
-  }
-
   setSort(method){
+    // Set sorting
     if(method !== this.state.sort){
       this.setState({sort:method,page:0},()=>{
       });
@@ -52,6 +42,7 @@ class App extends Component {
   }
 
   onSearch(){
+    // Replace spaces to pluses
     this.setState({page:0,q:this.state.q.trim().replace(/\s+/g,'+')},()=>{
       this.explore();
     });
@@ -86,5 +77,3 @@ class App extends Component {
     );
   }
 }
-
-export default App;
